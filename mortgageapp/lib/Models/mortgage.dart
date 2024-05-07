@@ -6,20 +6,24 @@ class MortgageCalculatorModel extends ChangeNotifier {
   double downPayment = 0;
   double interestRate = 0;
   double monthlyPayment = 0;
+  double loanTerm = 0;
+  double pmi = 0;
 
-  void updateValues(
-      double purchasePrice, double downPayment, double interestRate) {
+  double principalPayment = 0;
+  double interestPayment = 0;
+  double pmiPayment = 0;
+
+  void updateValues(double purchasePrice, double downPayment,
+      double interestRate, double loanTerm, double pmi) {
     this.purchasePrice = purchasePrice;
     this.downPayment = downPayment;
     this.interestRate = interestRate;
+    this.loanTerm = loanTerm;
+    this.pmi = pmi;
     notifyListeners();
   }
 
-  void calculateMonthlyPaytment() {
-    print('this is the purchase price: $purchasePrice');
-    print('this is the downpayment: $downPayment');
-    print('this is the interest rate: $interestRate');
-
+  void calculateMonthlyPayment() {
     // gets principle payment
     double principal = purchasePrice - downPayment;
 
@@ -27,18 +31,30 @@ class MortgageCalculatorModel extends ChangeNotifier {
     double monthlyInterest = interestRate / 12 / 100;
 
     // calculate # of payments, will get user value later.
-    int numberOfPayments = 360;
+    double numberOfPayments = loanTerm * 12;
 
     // monthly payment calculation
     double monthlyPayment = principal *
         (monthlyInterest * pow(1 + monthlyInterest, numberOfPayments)) /
         (pow(1 + monthlyInterest, numberOfPayments) - 1);
 
-    // Update the monthlyPayment property
+    /// Update the monthlyPayment property
     this.monthlyPayment = monthlyPayment;
-    print('monthly: $monthlyPayment');
 
-    // Notify listeners of the change
-    notifyListeners();
+    interestPayment = (principal * monthlyInterest);
+    principalPayment = monthlyPayment - interestPayment;
+
+
+    if (pmi > 0) {
+      // Calculate the PMI amount
+      double pmiAmount = principal * (pmi / 100) / 12;
+      this.monthlyPayment += pmiAmount;
+      pmiPayment = pmiAmount;
+      notifyListeners();
+    } else {
+      // If no PMI is provided, notify listeners without adding PMI to the monthly payment
+      pmiPayment = 0;
+      notifyListeners();
+    }
   }
 }

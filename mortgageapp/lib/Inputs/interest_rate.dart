@@ -15,6 +15,8 @@ class InterestRateInput extends StatelessWidget {
           model.purchasePrice, 
           model.downPayment, 
           interestRate,
+          model.loanTerm,
+          model.pmi,
         );
       },
       keyboardType: TextInputType.number,

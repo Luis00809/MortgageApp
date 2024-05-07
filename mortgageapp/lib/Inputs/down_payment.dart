@@ -15,6 +15,8 @@ class DownPaymentInput extends StatelessWidget {
           model.purchasePrice,
           downPayment,
           model.interestRate,
+          model.loanTerm,
+          model.pmi,
         );
       },
       keyboardType: TextInputType.number,
